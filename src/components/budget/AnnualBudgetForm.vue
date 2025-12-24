@@ -120,7 +120,11 @@ const handleSubmit = async () => {
     }
 
     if (props.budgetId) {
-      await budgetStore.updateAnnualBudget(props.budgetId, budgetData)
+      const updateData = {
+        category_id: budgetData.categoryId,
+        budget_amount: budgetData.annualAmount
+      }
+      await budgetStore.updateAnnualBudget(props.budgetId, updateData)
       emit('updated')
     } else {
       await budgetStore.createAnnualBudget(budgetData)
@@ -186,13 +190,6 @@ const loadBudgetData = async () => {
       selectedCategory.value = budget.category_id
       annualAmount.value = budget.budget_amount.toString()
       selectedFinancialYear.value = budget.financial_year
-      notes.value = budget.notes || ''
-      
-      // Load monthly breakdown if available
-      if (budget.monthly_breakdown) {
-        monthlyBreakdown.value = budget.monthly_breakdown
-        useMonthlyBreakdown.value = true
-      }
     }
   } catch (err) {
     console.error('Error loading budget data:', err)

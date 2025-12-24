@@ -157,7 +157,7 @@ export const useBudgetStore = defineStore('budget', () => {
           user_id: authStore.user.id,
           financial_year: budgetData.financialYear || getCurrentFinancialYear(),
           category_id: budgetData.categoryId,
-          budget_amount: budgetData.annualAmount
+          budget_amount: budgetData.annualAmount || budgetData.budgetAmount
         })
         .select()
         .single()
@@ -200,6 +200,61 @@ export const useBudgetStore = defineStore('budget', () => {
 
       annualBudgets.value = data || []
       return data
+    } catch (err) {
+      error.value = err?.message || 'An error occurred'
+      throw err
+    } finally {
+      loading.value = false
+    }
+  }
+
+  const updateAnnualBudget = async (budgetId, updates) => {
+    try {
+      loading.value = true
+      error.value = null
+
+      const { data, error: updateError } = await supabase
+        .from('annual_budgets')
+        .update({
+          ...updates,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', budgetId)
+        .eq('user_id', authStore.user.id)
+        .select()
+        .single()
+
+      if (updateError) throw updateError
+
+      const index = annualBudgets.value.findIndex(b => b.id === budgetId)
+      if (index !== -1) {
+        annualBudgets.value[index] = data
+      }
+
+      return data
+    } catch (err) {
+      error.value = err?.message || 'An error occurred'
+      throw err
+    } finally {
+      loading.value = false
+    }
+  }
+
+  const deleteAnnualBudget = async (budgetId) => {
+    try {
+      loading.value = true
+      error.value = null
+
+      const { error: deleteError } = await supabase
+        .from('annual_budgets')
+        .delete()
+        .eq('id', budgetId)
+        .eq('user_id', authStore.user.id)
+
+      if (deleteError) throw deleteError
+
+      annualBudgets.value = annualBudgets.value.filter(b => b.id !== budgetId)
+      return true
     } catch (err) {
       error.value = err?.message || 'An error occurred'
       throw err
@@ -664,6 +719,8 @@ export const useBudgetStore = defineStore('budget', () => {
     deleteMonthlyBudget,
     createAnnualBudget,
     fetchAnnualBudgets,
+    updateAnnualBudget,
+    deleteAnnualBudget,
     createFinancialGoal,
     fetchFinancialGoals,
     updateFinancialGoal,

@@ -6,7 +6,8 @@ import {
   BellIcon,
   CurrencyDollarIcon,
   ChartBarIcon,
-  DocumentCheckIcon
+  DocumentCheckIcon,
+  CheckIcon
 } from '@heroicons/vue/24/outline'
 
 const budgetStore = useBudgetStore()

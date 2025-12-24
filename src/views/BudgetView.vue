@@ -471,10 +471,10 @@ onMounted(async () => {
                     <div class="flex items-center space-x-2">
                       <div class="text-right mr-4">
                         <p class="text-lg font-medium text-gray-900">
-                          {{ financeStore.formatIndianCurrency(budget.annual_amount) }}
+                          {{ financeStore.formatIndianCurrency(budget.budget_amount) }}
                         </p>
                         <p class="text-sm text-gray-500">
-                          {{ financeStore.formatIndianCurrency(budget.annual_amount / 12) }}/month
+                          {{ financeStore.formatIndianCurrency(budget.budget_amount / 12) }}/month
                         </p>
                       </div>
                       <div class="flex space-x-2">
@@ -595,6 +595,70 @@ onMounted(async () => {
                   @created="loadBudgetData"
                   @updated="loadBudgetData"
                 />
+              </DialogPanel>
+            </TransitionChild>
+          </div>
+        </div>
+      </Dialog>
+    </TransitionRoot>
+
+    <!-- Delete Confirmation Modal -->
+    <TransitionRoot appear :show="showDeleteConfirm" as="template">
+      <Dialog as="div" @close="cancelDelete" class="relative z-10">
+        <TransitionChild
+          as="template"
+          enter="duration-300 ease-out"
+          enter-from="opacity-0"
+          enter-to="opacity-100"
+          leave="duration-200 ease-in"
+          leave-from="opacity-100"
+          leave-to="opacity-0"
+        >
+          <div class="fixed inset-0 bg-black bg-opacity-25" />
+        </TransitionChild>
+
+        <div class="fixed inset-0 overflow-y-auto">
+          <div class="flex min-h-full items-center justify-center p-4 text-center">
+            <TransitionChild
+              as="template"
+              enter="duration-300 ease-out"
+              enter-from="opacity-0 scale-95"
+              enter-to="opacity-100 scale-100"
+              leave="duration-200 ease-in"
+              leave-from="opacity-100 scale-100"
+              leave-to="opacity-0 scale-95"
+            >
+              <DialogPanel class="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
+                <DialogTitle as="h3" class="text-lg font-medium leading-6 text-gray-900 mb-4">
+                  Delete {{ deleteType === 'monthly' ? 'Monthly' : 'Annual' }} Budget
+                </DialogTitle>
+                <DialogDescription class="text-sm text-gray-500 mb-4">
+                  Are you sure you want to delete this budget? This action cannot be undone.
+                </DialogDescription>
+                
+                <div v-if="budgetToDelete" class="mb-4 p-3 bg-gray-50 rounded-md">
+                  <p class="text-sm font-medium text-gray-900">
+                    {{ budgetToDelete.categories?.name }}
+                  </p>
+                  <p class="text-sm text-gray-500">
+                    {{ deleteType === 'monthly' ? financeStore.formatIndianCurrency(budgetToDelete.budget_amount) : financeStore.formatIndianCurrency(budgetToDelete.budget_amount) }}
+                  </p>
+                </div>
+
+                <div class="flex justify-end space-x-3">
+                  <button
+                    @click="cancelDelete"
+                    class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    @click="confirmDeleteBudget"
+                    class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                  >
+                    Delete
+                  </button>
+                </div>
               </DialogPanel>
             </TransitionChild>
           </div>
