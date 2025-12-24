@@ -121,7 +121,8 @@
           <!-- Version Info -->
           <div class="border-t pt-6 sm:pt-8 mt-6 sm:mt-8">
             <div class="text-center text-gray-500">
-              <p class="mb-2 text-sm sm:text-base">FinTrack Version {{ version }}</p>
+              <p class="mb-2 text-sm sm:text-base">FinTrack Version {{ version }} ({{ environment }})</p>
+              <p class="text-xs sm:text-sm">Build Date: {{ buildDateFormatted }}</p>
               <p class="text-xs sm:text-sm">© 2025 FinTrack. All rights reserved.</p>
               <p class="text-xs sm:text-sm mt-2">A comprehensive financial management solution for Indian users</p>
             </div>
@@ -133,10 +134,11 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { ArrowLeftIcon, InformationCircleIcon } from '@heroicons/vue/24/outline'
+import { version, getBuildDateLocal } from '@/config/version'
 
 const router = useRouter()
-const version = ref('0.0.30')
+const environment = import.meta.env.MODE
+const buildDateFormatted = getBuildDateLocal()
 </script>

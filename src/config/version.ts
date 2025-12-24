@@ -3,7 +3,7 @@
 
 export const appConfig = {
   appName: 'FinTrack',
-  version: '0.0.31',
+  version: '0.0.36',
   buildDate: new Date().toISOString(), // ISO 8601 format in UTC
 }
 
