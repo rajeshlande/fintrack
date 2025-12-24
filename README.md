@@ -1,6 +1,6 @@
 # FinTrack - Personal Finance Management
 
-[![Version](https://img.shields.io/badge/version-0.0.34-blue.svg)](https://github.com/yourusername/fintrack)
+[![Version](https://img.shields.io/badge/version-0.0.38-blue.svg)](https://github.com/yourusername/fintrack)
 [![Vue](https://img.shields.io/badge/Vue-3.5.24-green.svg)](https://vuejs.org/)
 [![Supabase](https://img.shields.io/badge/Supabase-2.87.2-orange.svg)](https://supabase.com/)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)

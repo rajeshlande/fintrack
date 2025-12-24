@@ -5,6 +5,20 @@ All notable changes to FinTrack will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.0.38] - 2025-12-24
+
+### Fixed
+- Fixed monthly budget deletion functionality by adding missing delete confirmation dialog
+- Fixed annual budget creation 400 error by aligning database schema with code
+- Updated template references from `annual_amount` to `budget_amount` for consistency
+- Removed non-existent database fields (`monthly_breakdown`, `notes`) from annual budget operations
+- Enhanced budget management UI with proper error handling and user feedback
+
+### Improved
+- Better error handling for budget operations
+- Consistent database field naming across all budget components
+- More reliable budget deletion with confirmation dialogs
+
 ## [Unreleased]
 
 ### Added
