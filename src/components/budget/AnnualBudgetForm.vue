@@ -218,10 +218,12 @@ const loadBudgetData = async () => {
         Category *
       </label>
       <select
-        id="category"
-        v-model="selectedCategory"
-        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-        required
+  id="category"
+  v-model="selectedCategory"
+  class="w-full px-4 py-4 text-lg border-2 rounded-xl transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-opacity-50 border-red-300 focus:border-red-500 focus:ring-red-200 text-red-900"
+  required
+  aria-describedby="category-help"
+  aria-required="true"
       >
         <option value="">Select a category</option>
         <option v-for="category in filteredCategories" 
@@ -238,17 +240,21 @@ const loadBudgetData = async () => {
         Annual Budget Amount (₹) *
       </label>
       <div class="mt-1 relative rounded-md shadow-sm">
-        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-          <span class="text-gray-500 sm:text-sm">₹</span>
+        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+          <span class="text-gray-500 text-lg">₹</span>
         </div>
         <input
           id="annualAmount"
           v-model="annualAmount"
           @input="formatCurrencyInput"
-          type="text"
-          class="block w-full pl-7 pr-12 sm:text-sm border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
-          placeholder="0.00"
+          type="number"
+          step="0.01"
+          min="0"
           required
+          class="w-full px-4 pl-12 py-4 text-lg border-2 rounded-xl transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-opacity-50 border-red-300 focus:border-red-500 focus:ring-red-200 text-red-900"
+          placeholder="Enter amount"
+          aria-describedby="annualAmount-help"
+          aria-required="true"
         />
       </div>
       <p class="mt-1 text-sm text-gray-500">
@@ -265,10 +271,12 @@ const loadBudgetData = async () => {
         Financial Year *
       </label>
       <select
-        id="financialYear"
-        v-model="selectedFinancialYear"
-        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-        required
+  id="financialYear"
+  v-model="selectedFinancialYear"
+  class="w-full px-4 py-4 text-lg border-2 rounded-xl transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-opacity-50 border-red-300 focus:border-red-500 focus:ring-red-200 text-red-900"
+  required
+  aria-describedby="financialYear-help"
+  aria-required="true"
       >
         <option v-for="year in [2022, 2023, 2024, 2025, 2026]" 
                 :key="year" :value="year">
@@ -284,7 +292,7 @@ const loadBudgetData = async () => {
           id="useMonthlyBreakdown"
           v-model="useMonthlyBreakdown"
           type="checkbox"
-          class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+          class="h-5 w-5 text-red-600 focus:ring-2 focus:ring-red-200 border-red-300 rounded transition-all duration-200"
         />
         <label for="useMonthlyBreakdown" class="ml-2 block text-sm text-gray-700">
           Set custom monthly allocation (optional)
@@ -321,9 +329,11 @@ const loadBudgetData = async () => {
               :id="`month-${month.value}`"
               :value="monthlyBreakdown[month.value] || ''"
               @input="formatMonthlyInput(month.value, $event)"
-              type="text"
-              class="block w-full pl-6 pr-8 text-xs border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
-              placeholder="0.00"
+              type="number"
+              step="0.01"
+              min="0"
+              class="w-full px-4 pl-8 py-3 text-base border-2 rounded-xl transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-opacity-50 border-red-300 focus:border-red-500 focus:ring-red-200 text-red-900"
+              placeholder="Enter amount"
             />
           </div>
         </div>
@@ -355,8 +365,10 @@ const loadBudgetData = async () => {
         id="notes"
         v-model="notes"
         rows="3"
-        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+        class="w-full px-4 py-4 text-lg border-2 rounded-xl transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-opacity-50 border-red-300 focus:border-red-500 focus:ring-red-200 text-red-900"
         placeholder="Add any notes about this annual budget..."
+        aria-describedby="notes-help"
+        aria-required="false"
       ></textarea>
     </div>
 

@@ -98,15 +98,15 @@ router.beforeEach(async (to, from, next) => {
     await authStore.initializeAuth()
   }
 
-  // Wait for auth initialization if still loading
-  while (authStore.loading) {
+  // Wait for auth initialization if still loading (with timeout to prevent infinite loop)
+  let attempts = 0
+  while (authStore.loading && attempts < 20) {
     await new Promise(resolve => setTimeout(resolve, 50))
+    attempts++
   }
 
-  // Redirect all unauthenticated users to login except auth pages
+  // Simplified redirect logic
   if (!authStore.isAuthenticated && !to.meta.requiresGuest) {
-    next({ name: 'login', query: { redirect: to.fullPath } })
-  } else if (to.meta.requiresAuth && !authStore.isAuthenticated) {
     next({ name: 'login', query: { redirect: to.fullPath } })
   } else if (to.meta.requiresGuest && authStore.isAuthenticated) {
     next({ name: 'dashboard' })

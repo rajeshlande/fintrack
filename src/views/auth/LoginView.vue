@@ -20,8 +20,7 @@ const handleSubmit = async () => {
   try {
     isSubmitting.value = true
     await authStore.signIn(email.value, password.value)
-    // Small delay to ensure auth state is updated
-    await new Promise(resolve => setTimeout(resolve, 100))
+    // Redirect immediately - auth state change listener will handle UI updates
     router.push(redirectPath.value)
   } catch (error) {
     console.error('Login failed:', error)

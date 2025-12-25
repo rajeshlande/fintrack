@@ -73,13 +73,14 @@ const handleSubmit = async () => {
     loading.value = true
     error.value = null
 
+
     const budgetData = {
-      categoryId: selectedCategory.value,
-      budgetAmount: parseFloat(budgetAmount.value),
+      category_id: selectedCategory.value,
+      budget_amount: parseFloat(budgetAmount.value),
       month: selectedMonth.value,
-      financialYear: selectedFinancialYear.value,
-      alertThreshold80: alertThreshold80.value,
-      alertThreshold100: alertThreshold100.value,
+      year: selectedFinancialYear.value,
+      alert_threshold_80: alertThreshold80.value,
+      alert_threshold_100: alertThreshold100.value,
       notes: notes.value
     }
 
@@ -87,7 +88,16 @@ const handleSubmit = async () => {
       await budgetStore.updateMonthlyBudget(props.budgetId, budgetData)
       emit('updated')
     } else {
-      await budgetStore.createMonthlyBudget(budgetData)
+      // For create, keep camelCase for compatibility with createMonthlyBudget
+      await budgetStore.createMonthlyBudget({
+        categoryId: selectedCategory.value,
+        budgetAmount: parseFloat(budgetAmount.value),
+        month: selectedMonth.value,
+        financialYear: selectedFinancialYear.value,
+        alertThreshold80: alertThreshold80.value,
+        alertThreshold100: alertThreshold100.value,
+        notes: notes.value
+      })
       emit('created')
     }
 
@@ -125,7 +135,10 @@ const formatCurrencyInput = (event) => {
 
 onMounted(async () => {
   await loadCategories()
-  
+
+  // Always fetch budgets before loading data for editing
+  await budgetStore.fetchMonthlyBudgets()
+
   // Load existing budget data if editing
   if (props.budgetId) {
     await loadBudgetData()
@@ -167,16 +180,18 @@ const loadBudgetData = async () => {
 
     <!-- Category Selection -->
     <div>
-      <label for="category" class="block text-sm font-medium text-gray-700">
+      <label for="category" class="block text-sm/6 font-semibold text-gray-900 mb-2">
         Category *
       </label>
       <select
         id="category"
         v-model="selectedCategory"
-        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+        class="w-full px-4 py-4 text-lg border-2 rounded-xl transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-opacity-50 border-red-300 focus:border-red-500 focus:ring-red-200 text-red-900"
         required
+        aria-describedby="category-help"
+        aria-required="true"
       >
-        <option value="">Select a category</option>
+        <option disabled value="">Select category</option>
         <option v-for="category in filteredCategories" 
                 :key="category.id" 
                 :value="category.id">
@@ -190,21 +205,25 @@ const loadBudgetData = async () => {
       <label for="amount" class="block text-sm font-medium text-gray-700">
         Budget Amount (₹) *
       </label>
-      <div class="mt-1 relative rounded-md shadow-sm">
-        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-          <span class="text-gray-500 sm:text-sm">₹</span>
+      <div class="mt-1 relative rounded-xl">
+        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+          <span class="text-gray-500 text-lg">₹</span>
         </div>
         <input
           id="amount"
           v-model="budgetAmount"
           @input="formatCurrencyInput"
-          type="text"
-          class="block w-full pl-7 pr-12 sm:text-sm border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
-          placeholder="0.00"
+          type="number"
+          step="0.01"
+          min="0"
           required
+          class="w-full px-4 pl-12 py-4 text-lg border-2 rounded-xl transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-opacity-50 border-red-300 focus:border-red-500 focus:ring-red-200 text-red-900"
+          placeholder="Enter amount"
+          aria-describedby="amount-help"
+          aria-required="true"
         />
       </div>
-      <p class="mt-1 text-sm text-gray-500">
+      <p id="amount-help" class="mt-1 text-sm text-gray-500">
         Enter the monthly budget amount for this category
       </p>
     </div>
@@ -218,8 +237,10 @@ const loadBudgetData = async () => {
         <select
           id="month"
           v-model="selectedMonth"
-          class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+          class="w-full px-4 py-4 text-lg border-2 rounded-xl transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-opacity-50 border-red-300 focus:border-red-500 focus:ring-red-200 text-red-900"
           required
+          aria-describedby="month-help"
+          aria-required="true"
         >
           <option v-for="month in months" :key="month.value" :value="month.value">
             {{ month.name }}
@@ -234,8 +255,10 @@ const loadBudgetData = async () => {
         <select
           id="financialYear"
           v-model="selectedFinancialYear"
-          class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+          class="w-full px-4 py-4 text-lg border-2 rounded-xl transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-opacity-50 border-red-300 focus:border-red-500 focus:ring-red-200 text-red-900"
           required
+          aria-describedby="financialYear-help"
+          aria-required="true"
         >
           <option v-for="year in [2022, 2023, 2024, 2025, 2026]" 
                   :key="year" :value="year">
@@ -257,7 +280,7 @@ const loadBudgetData = async () => {
             id="alert80"
             v-model="alertThreshold80"
             type="checkbox"
-            class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+            class="h-5 w-5 text-red-600 focus:ring-2 focus:ring-red-200 border-red-300 rounded transition-all duration-200"
           />
           <label for="alert80" class="ml-2 block text-sm text-gray-700">
             Alert when 80% of budget is used
@@ -269,7 +292,7 @@ const loadBudgetData = async () => {
             id="alert100"
             v-model="alertThreshold100"
             type="checkbox"
-            class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+            class="h-5 w-5 text-red-600 focus:ring-2 focus:ring-red-200 border-red-300 rounded transition-all duration-200"
           />
           <label for="alert100" class="ml-2 block text-sm text-gray-700">
             Alert when budget is exceeded
@@ -287,8 +310,10 @@ const loadBudgetData = async () => {
         id="notes"
         v-model="notes"
         rows="3"
-        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+        class="w-full px-4 py-4 text-lg border-2 rounded-xl transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-opacity-50 border-red-300 focus:border-red-500 focus:ring-red-200 text-red-900"
         placeholder="Add any notes about this budget..."
+        aria-describedby="notes-help"
+        aria-required="false"
       ></textarea>
     </div>
 
