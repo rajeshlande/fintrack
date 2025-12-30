@@ -1,11 +1,15 @@
 {
   "name": "fintrack",
   "private": true,
-  "version": "0.0.40",
+  "version": "0.1.1",
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "node scripts/build-with-version.js",
+    "build": "vite build",
+    "version:bump": "node scripts/build-with-version.js",
+    "version:major": "node scripts/build-with-version.js major",
+    "version:minor": "node scripts/build-with-version.js minor",
+    "version:patch": "node scripts/build-with-version.js patch",
     "build:static": "vite build",
     "preview": "vite preview"
   },

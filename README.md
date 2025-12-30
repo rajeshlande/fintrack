@@ -314,6 +314,27 @@ Ensure production environment variables are set:
 - **Discussions**: Community support forum
 - **Email**: Contact the maintainers
 
+## 🏷️ Versioning
+
+This project uses manual semantic versioning. You can bump the version and update changelogs using the following npm scripts:
+
+- **Major version bump:**
+  ```bash
+  npm run version:major
+  ```
+- **Minor version bump:**
+  ```bash
+  npm run version:minor
+  ```
+- **Patch version bump:**
+  ```bash
+  npm run version:patch
+  ```
+
+These scripts will update `package.json`, `src/config/version.ts`, and the `CHANGELOG.md` file. The version is only changed when you run one of these commands.
+
+The normal build process (`npm run build`) does not change the version.
+
 ## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

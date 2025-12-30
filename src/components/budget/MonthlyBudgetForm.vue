@@ -85,6 +85,7 @@ const handleSubmit = async () => {
     }
 
     if (props.budgetId) {
+      // Always send all required fields for update
       await budgetStore.updateMonthlyBudget(props.budgetId, budgetData)
       emit('updated')
     } else {
@@ -139,27 +140,44 @@ onMounted(async () => {
   // Always fetch budgets before loading data for editing
   await budgetStore.fetchMonthlyBudgets()
 
-  // Load existing budget data if editing
+  // Debug: log budgets and ID
+  console.log('MonthlyBudgets:', budgetStore.monthlyBudgets)
+  console.log('Edit budgetId:', props.budgetId)
+
+  // Wait for budgets to be fetched, then load data for editing
   if (props.budgetId) {
-    await loadBudgetData()
+    // Defensive: try again if not found
+    let tries = 0;
+    let budget = budgetStore.monthlyBudgets.find(b => String(b.id) === String(props.budgetId));
+    while (!budget && tries < 3) {
+      await budgetStore.fetchMonthlyBudgets();
+      budget = budgetStore.monthlyBudgets.find(b => String(b.id) === String(props.budgetId));
+      tries++;
+    }
+    console.log('Found budget:', budget);
+    if (budget) {
+      await loadBudgetData();
+    } else {
+      error.value = 'Could not find the selected budget to edit.';
+    }
   }
 })
 
 const loadBudgetData = async () => {
   try {
-    const budget = budgetStore.monthlyBudgets.find(b => b.id === props.budgetId)
+    const budget = budgetStore.monthlyBudgets.find(b => String(b.id) === String(props.budgetId));
     if (budget) {
-      selectedCategory.value = budget.category_id
-      budgetAmount.value = budget.budget_amount.toString()
-      selectedMonth.value = budget.month
-      selectedFinancialYear.value = budget.year
-      alertThreshold80.value = budget.alert_threshold_80 !== false
-      alertThreshold100.value = budget.alert_threshold_100 !== false
-      notes.value = budget.notes || ''
+      selectedCategory.value = budget.category_id;
+      budgetAmount.value = budget.budget_amount ? budget.budget_amount.toString() : '';
+      selectedMonth.value = budget.month;
+      selectedFinancialYear.value = budget.year;
+      alertThreshold80.value = budget.alert_threshold_80 !== false;
+      alertThreshold100.value = budget.alert_threshold_100 !== false;
+      notes.value = budget.notes || '';
     }
   } catch (err) {
-    console.error('Error loading budget data:', err)
-    error.value = 'Failed to load budget data'
+    console.error('Error loading budget data:', err);
+    error.value = 'Failed to load budget data';
   }
 }
 </script>

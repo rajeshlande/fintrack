@@ -199,7 +199,18 @@ function main() {
   const packagePath = join(rootDir, 'package.json');
   const packageJson = JSON.parse(readFileSync(packagePath, 'utf8'));
   const currentVersion = packageJson.version;
-  const bumpType = getBumpType();
+
+  // Accept bump type from command line: node build-with-version.js [major|minor|patch]
+  const argBumpType = process.argv[2];
+  const validBumps = ['major', 'minor', 'patch'];
+  let bumpType = 'patch';
+  if (argBumpType && validBumps.includes(argBumpType)) {
+    bumpType = argBumpType;
+  } else if (argBumpType) {
+    console.log(`⚠️ Unknown bump type '${argBumpType}', defaulting to patch.`);
+  } else {
+    bumpType = getBumpType();
+  }
   const newVersion = incrementVersion(currentVersion, bumpType);
 
   console.log(`📦 Current version: ${currentVersion}`);
