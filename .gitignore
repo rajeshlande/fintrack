@@ -30,11 +30,29 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
-.env*
+# env files (secrets never committed)
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# allow env template
+!.env.example
 
 # vercel
 .vercel
+
+# PWA dev/build artifacts
+public/sw.js
+public/sw.js.map
+public/workbox-*.js
+public/workbox-*.js.map
+public/fallback-*.js
+
+# IDE
+.idea/
+.vscode/
 
 # typescript
 *.tsbuildinfo

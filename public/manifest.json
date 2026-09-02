@@ -1,0 +1,22 @@
+{
+    "name": "FinTrack Personal Finance",
+    "short_name": "FinTrack",
+    "description": "Secure, offline-first Indian Personal Finance Tracker",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#eef1f6",
+    "theme_color": "#eef1f6",
+    "icons": [
+      {
+        "src": "/icon-192x192.png",
+        "sizes": "192x192",
+        "type": "image/png"
+      },
+      {
+        "src": "/icon-512x512.png",
+        "sizes": "512x512",
+        "type": "image/png"
+      }
+    ]
+  }
+  
