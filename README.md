@@ -52,4 +52,4 @@ See `.env.example` for required variables.
 
 ## License
 
-Private — personal use.
+GPL-3.0 — see [LICENSE](LICENSE).
