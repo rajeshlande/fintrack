@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { navIconMap } from "@/components/layout/nav-icons";
@@ -43,9 +44,13 @@ export function Sidebar({ active }: SidebarProps) {
       >
         <div className={`flex items-center mb-6 ${collapsed ? "justify-center" : "px-1"}`}>
           <Link href="/" className="flex items-center gap-3 min-w-0" aria-label="FinTrack home">
-            <span className="w-10 h-10 shrink-0 rounded-2xl bg-[#1a1d23] text-white flex items-center justify-center text-sm font-bold shadow-lg">
-              F
-            </span>
+            <Image
+              src="/logo.png"
+              alt="FinTrack"
+              width={40}
+              height={40}
+              className="w-10 h-10 shrink-0 rounded-2xl object-cover shadow-lg"
+            />
             {!collapsed && (
               <span className="font-bold text-[#1a1d23] text-lg tracking-tight truncate">
                 FinTrack
@@ -76,10 +81,8 @@ export function Sidebar({ active }: SidebarProps) {
                 aria-current={isActive ? "page" : undefined}
               >
                 <Icon className="w-5 h-5 shrink-0" />
-                {!collapsed && (
-                  <span className={`text-sm font-medium truncate ${mounted ? "opacity-100" : "opacity-0"}`}>
-                    {label}
-                  </span>
+                {!collapsed && mounted && (
+                  <span className="text-sm font-medium truncate">{label}</span>
                 )}
               </Link>
             );

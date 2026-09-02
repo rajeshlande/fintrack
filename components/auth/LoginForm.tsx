@@ -1,14 +1,23 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState } from "react";
+import { useActionState, useEffect } from "react";
+import { ClientOnly } from "@/components/ui/ClientOnly";
 import { loginAction, type AuthActionState } from "@/lib/auth/actions";
+import { AuthFormSkeleton } from "@/components/ui/AuthFormSkeleton";
+import { extensionSafeFormProps, extensionSafeInputProps } from "@/lib/form-props";
 import { createClient } from "@/lib/supabase/client";
 
 const initialState: AuthActionState = { error: null };
 
-export function LoginForm() {
+function LoginFormInner() {
   const [state, formAction, pending] = useActionState(loginAction, initialState);
+
+  useEffect(() => {
+    if (state?.success) {
+      window.location.assign("/");
+    }
+  }, [state?.success]);
 
   async function handleGoogleSignIn() {
     const supabase = createClient();
@@ -42,7 +51,7 @@ export function LoginForm() {
         </div>
       </div>
 
-      <form action={formAction} className="space-y-4">
+      <form action={formAction} className="space-y-4" {...extensionSafeFormProps}>
         <div>
           <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1.5">
             Email
@@ -59,6 +68,7 @@ export function LoginForm() {
             required
             placeholder="you@example.com"
             className="input-glass"
+            {...extensionSafeInputProps}
           />
         </div>
 
@@ -79,6 +89,7 @@ export function LoginForm() {
             required
             placeholder="••••••••"
             className="input-glass"
+            {...extensionSafeInputProps}
           />
         </div>
 
@@ -96,6 +107,14 @@ export function LoginForm() {
         </Link>
       </p>
     </div>
+  );
+}
+
+export function LoginForm() {
+  return (
+    <ClientOnly fallback={<AuthFormSkeleton />}>
+      <LoginFormInner />
+    </ClientOnly>
   );
 }
 

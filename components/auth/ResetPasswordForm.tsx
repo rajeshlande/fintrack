@@ -1,17 +1,26 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState } from "react";
+import { useActionState, useEffect } from "react";
+import { ClientOnly } from "@/components/ui/ClientOnly";
 import { resetPasswordAction, type AuthActionState } from "@/lib/auth/actions";
+import { AuthFormSkeleton } from "@/components/ui/AuthFormSkeleton";
+import { extensionSafeFormProps, extensionSafeInputProps } from "@/lib/form-props";
 
 const initialState: AuthActionState = { error: null };
 
-export function ResetPasswordForm() {
+function ResetPasswordFormInner() {
   const [state, formAction, pending] = useActionState(resetPasswordAction, initialState);
+
+  useEffect(() => {
+    if (state?.success && state.redirectTo) {
+      window.location.assign(state.redirectTo);
+    }
+  }, [state?.success, state?.redirectTo]);
 
   return (
     <div className="space-y-4">
-      <form action={formAction} className="space-y-4">
+      <form action={formAction} className="space-y-4" {...extensionSafeFormProps}>
         <div>
           <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1.5">
             New Password
@@ -25,6 +34,7 @@ export function ResetPasswordForm() {
             minLength={8}
             placeholder="Min. 8 characters"
             className="input-glass"
+            {...extensionSafeInputProps}
           />
         </div>
 
@@ -41,6 +51,7 @@ export function ResetPasswordForm() {
             minLength={8}
             placeholder="Re-enter password"
             className="input-glass"
+            {...extensionSafeInputProps}
           />
         </div>
 
@@ -58,5 +69,13 @@ export function ResetPasswordForm() {
         </Link>
       </p>
     </div>
+  );
+}
+
+export function ResetPasswordForm() {
+  return (
+    <ClientOnly fallback={<AuthFormSkeleton />}>
+      <ResetPasswordFormInner />
+    </ClientOnly>
   );
 }

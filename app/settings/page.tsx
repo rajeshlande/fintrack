@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { PageLayout } from "@/components/layout/PageLayout";
 import {
   ChangePasswordForm,
@@ -7,6 +8,8 @@ import {
 import { SettingsRow, SettingsSection } from "@/components/settings/SettingsSection";
 import { SettingsTabs } from "@/components/settings/SettingsTabs";
 import { createClient } from "@/lib/supabase/server";
+import { getLatestVersion } from "@/lib/changelog";
+import { APP_NAME, getVersionLabel } from "@/lib/version";
 
 type SettingsPageProps = {
   searchParams: Promise<{ tab?: string }>;
@@ -70,8 +73,14 @@ export default async function SettingsPage({ searchParams }: SettingsPageProps) 
           </SettingsSection>
 
           <SettingsSection title="About">
-            <SettingsRow label="App" value="FinTrack Personal Finance" />
-            <SettingsRow label="Version" value="1.0.0" />
+            <SettingsRow label="App" value={APP_NAME} />
+            <SettingsRow label="Version" value={getVersionLabel()} />
+            <SettingsRow label="Latest release" value={`v${getLatestVersion()}`} />
+            <SettingsRow label="Changelog">
+              <Link href="/changelog" className="link-accent text-sm font-semibold">
+                View release notes →
+              </Link>
+            </SettingsRow>
             <SettingsRow label="Built for" value="Indian UPI & personal finance" />
           </SettingsSection>
         </div>

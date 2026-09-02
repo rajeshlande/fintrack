@@ -2,11 +2,14 @@
 
 import Link from "next/link";
 import { useActionState } from "react";
+import { ClientOnly } from "@/components/ui/ClientOnly";
 import { forgotPasswordAction, type AuthActionState } from "@/lib/auth/actions";
+import { AuthFormSkeleton } from "@/components/ui/AuthFormSkeleton";
+import { extensionSafeFormProps, extensionSafeInputProps } from "@/lib/form-props";
 
 const initialState: AuthActionState = { error: null };
 
-export function ForgotPasswordForm() {
+function ForgotPasswordFormInner() {
   const [state, formAction, pending] = useActionState(forgotPasswordAction, initialState);
 
   if (state?.success) {
@@ -29,7 +32,7 @@ export function ForgotPasswordForm() {
 
   return (
     <div className="space-y-4">
-      <form action={formAction} className="space-y-4">
+      <form action={formAction} className="space-y-4" {...extensionSafeFormProps}>
         <div>
           <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1.5">
             Email
@@ -46,6 +49,7 @@ export function ForgotPasswordForm() {
             required
             placeholder="you@example.com"
             className="input-glass"
+            {...extensionSafeInputProps}
           />
         </div>
 
@@ -61,5 +65,13 @@ export function ForgotPasswordForm() {
         <Link href="/login" className="link-accent">Sign in</Link>
       </p>
     </div>
+  );
+}
+
+export function ForgotPasswordForm() {
+  return (
+    <ClientOnly fallback={<AuthFormSkeleton />}>
+      <ForgotPasswordFormInner />
+    </ClientOnly>
   );
 }

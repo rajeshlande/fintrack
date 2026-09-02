@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Logo } from "@/components/ui/Logo";
 
 type AuthLayoutProps = {
   children: React.ReactNode;
@@ -13,9 +14,10 @@ export function AuthLayout({ children, title, subtitle }: AuthLayoutProps) {
         <div className="text-center mb-8">
           <Link
             href="/"
-            className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-[#1a1d23] text-white text-xl font-bold shadow-lg mb-4"
+            className="inline-flex items-center justify-center mb-4"
+            aria-label="FinTrack home"
           >
-            F
+            <Logo size={64} priority />
           </Link>
           <h1 className="text-2xl font-bold text-[#1a1d23] tracking-tight">
             FinTrack

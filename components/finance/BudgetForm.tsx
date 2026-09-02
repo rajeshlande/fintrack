@@ -9,14 +9,33 @@ export function BudgetForm() {
   const [state, action, pending] = useActionState(addBudgetAction, initial);
 
   return (
-    <form action={action} className="space-y-3">
+    <form action={action} className="space-y-3" suppressHydrationWarning>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        <input name="name" required placeholder="Budget name" className="input-glass" />
-        <input name="amount" type="number" min="0" required placeholder="Amount ₹" className="input-glass" />
+        <input
+          name="name"
+          required
+          placeholder="Budget name"
+          className="input-glass"
+          suppressHydrationWarning
+        />
+        <input
+          name="amount"
+          type="number"
+          min="0"
+          required
+          placeholder="Amount ₹"
+          className="input-glass"
+          suppressHydrationWarning
+        />
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        <input name="category" placeholder="Category (e.g. Food)" className="input-glass" />
-        <select name="period" className="input-glass">
+        <input
+          name="category"
+          placeholder="Category (e.g. Food)"
+          className="input-glass"
+          suppressHydrationWarning
+        />
+        <select name="period" className="input-glass" suppressHydrationWarning>
           <option value="monthly">Monthly</option>
           <option value="annual">Annual</option>
         </select>

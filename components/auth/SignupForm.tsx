@@ -2,12 +2,15 @@
 
 import Link from "next/link";
 import { useActionState } from "react";
+import { ClientOnly } from "@/components/ui/ClientOnly";
 import { signupAction, type AuthActionState } from "@/lib/auth/actions";
+import { AuthFormSkeleton } from "@/components/ui/AuthFormSkeleton";
+import { extensionSafeFormProps, extensionSafeInputProps } from "@/lib/form-props";
 import { createClient } from "@/lib/supabase/client";
 
 const initialState: AuthActionState = { error: null };
 
-export function SignupForm() {
+function SignupFormInner() {
   const [state, formAction, pending] = useActionState(signupAction, initialState);
 
   async function handleGoogleSignIn() {
@@ -57,12 +60,12 @@ export function SignupForm() {
         </div>
       </div>
 
-      <form action={formAction} className="space-y-4">
+      <form action={formAction} className="space-y-4" {...extensionSafeFormProps}>
         <div>
           <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 mb-1.5">
             Full Name
           </label>
-          <input id="fullName" name="fullName" type="text" autoComplete="name" required placeholder="Rajesh Kumar" className="input-glass" />
+          <input id="fullName" name="fullName" type="text" autoComplete="name" required placeholder="Rajesh Kumar" className="input-glass" {...extensionSafeInputProps} />
         </div>
 
         <div>
@@ -73,7 +76,7 @@ export function SignupForm() {
             <span className="inline-flex items-center px-3 min-h-[3rem] bg-black/[0.03] border border-black/5 border-r-0 rounded-l-[0.875rem] text-sm text-gray-500 font-medium">
               +91
             </span>
-            <input id="phone" name="phone" type="tel" inputMode="numeric" autoComplete="tel" placeholder="9876543210" maxLength={10} pattern="[0-9]{10}" className="input-glass rounded-l-none flex-1" />
+            <input id="phone" name="phone" type="tel" inputMode="numeric" autoComplete="tel" placeholder="9876543210" maxLength={10} pattern="[0-9]{10}" className="input-glass rounded-l-none flex-1" {...extensionSafeInputProps} />
           </div>
         </div>
 
@@ -81,14 +84,14 @@ export function SignupForm() {
           <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1.5">
             Email
           </label>
-          <input id="email" name="email" type="email" inputMode="email" autoComplete="email" autoCapitalize="none" autoCorrect="off" spellCheck={false} required placeholder="you@example.com" className="input-glass" />
+          <input id="email" name="email" type="email" inputMode="email" autoComplete="email" autoCapitalize="none" autoCorrect="off" spellCheck={false} required placeholder="you@example.com" className="input-glass" {...extensionSafeInputProps} />
         </div>
 
         <div>
           <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1.5">
             Password
           </label>
-          <input id="password" name="password" type="password" autoComplete="new-password" required minLength={8} placeholder="Min. 8 characters" className="input-glass" />
+          <input id="password" name="password" type="password" autoComplete="new-password" required minLength={8} placeholder="Min. 8 characters" className="input-glass" {...extensionSafeInputProps} />
         </div>
 
         {state?.error && <p className="alert-error">{state.error}</p>}
@@ -103,6 +106,14 @@ export function SignupForm() {
         <Link href="/login" className="link-accent">Sign in</Link>
       </p>
     </div>
+  );
+}
+
+export function SignupForm() {
+  return (
+    <ClientOnly fallback={<AuthFormSkeleton />}>
+      <SignupFormInner />
+    </ClientOnly>
   );
 }
 

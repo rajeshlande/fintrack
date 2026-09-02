@@ -2,12 +2,12 @@
 
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
-import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 
 export type AuthActionState = {
   error: string | null;
   success?: boolean;
+  redirectTo?: string;
 };
 
 async function getSiteUrl() {
@@ -42,7 +42,7 @@ export async function loginAction(
   }
 
   revalidatePath("/", "layout");
-  redirect("/");
+  return { error: null, success: true };
 }
 
 export async function signupAction(
@@ -142,5 +142,5 @@ export async function resetPasswordAction(
 
   await supabase.auth.signOut();
   revalidatePath("/", "layout");
-  redirect("/login?reset=success");
+  return { error: null, success: true, redirectTo: "/login?reset=success" };
 }

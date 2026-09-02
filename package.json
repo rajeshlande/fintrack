@@ -1,12 +1,16 @@
 {
   "name": "fintrack",
-  "version": "0.1.0",
+  "version": "1.0.2",
   "private": true,
+  "description": "Indian personal finance PWA — track income, expenses, credit cards, budgets, and net worth.",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "version:patch": "npm version patch --no-git-tag-version",
+    "version:minor": "npm version minor --no-git-tag-version",
+    "version:major": "npm version major --no-git-tag-version"
   },
   "dependencies": {
     "@ducanh2912/next-pwa": "^10.2.9",
