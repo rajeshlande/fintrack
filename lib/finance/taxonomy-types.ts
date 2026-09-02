@@ -11,6 +11,13 @@ export type FinanceCategory = {
   level: number;
   parent_id: string | null;
   transaction_type_id: string;
+  description?: string | null;
+  icon?: string | null;
+  color?: string | null;
+  keywords?: string[] | null;
+  sort_order?: number;
+  is_system?: boolean;
+  is_active?: boolean;
 };
 
 export type PaymentMethod = {
@@ -86,4 +93,18 @@ export function resolvePaymentMethodLabel(
     return parent ? `${parent.name} → ${method.name}` : method.name;
   }
   return method.name;
+}
+
+export function buildCategoryChildrenMap(categories: FinanceCategory[]) {
+  const map = new Map<string | null, FinanceCategory[]>();
+  for (const category of categories) {
+    const key = category.parent_id;
+    const list = map.get(key) ?? [];
+    list.push(category);
+    map.set(key, list);
+  }
+  for (const list of map.values()) {
+    list.sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0) || a.name.localeCompare(b.name));
+  }
+  return map;
 }

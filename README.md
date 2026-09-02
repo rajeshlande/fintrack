@@ -1,14 +1,28 @@
-# FinTrack
+<p align="center">
+  <img src="public/logo.png" alt="FinTrack logo" width="128" height="128" />
+</p>
+
+<h1 align="center">FinTrack</h1>
+
+<p align="center">
+  <a href="CHANGELOG.md"><img src="https://img.shields.io/badge/version-1.0.8-1a1d23?style=flat-square" alt="Version 1.0.8" /></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-GPLv3-blue?style=flat-square" alt="License: GPL v3" /></a>
+</p>
+
+<p align="center">
+  <strong>Indian personal finance PWA</strong> — track income, UPI expenses, credit cards, budgets, and net worth.
+</p>
+
+<p align="center">
+  <a href="https://github.com/rajeshlande/fintrack">Repository</a> ·
+  <a href="CHANGELOG.md">Changelog</a> ·
+  <a href="#getting-started">Getting Started</a>
+</p>
 
 [![Next.js](https://img.shields.io/badge/Next.js-16-black?style=flat-square&logo=next.js)](https://nextjs.org/)
 [![React](https://img.shields.io/badge/React-19-61DAFB?style=flat-square&logo=react&logoColor=white)](https://react.dev/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Supabase](https://img.shields.io/badge/Supabase-Auth%20%2B%20DB-3FCF8E?style=flat-square&logo=supabase&logoColor=white)](https://supabase.com/)
-[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue?style=flat-square)](LICENSE)
-
-**FinTrack** is a personal finance Progressive Web App (PWA) built for the Indian market. Track income, UPI expenses, credit cards, budgets, and net worth — with a responsive glassmorphism UI that works on desktop and mobile.
-
-**Repository:** [github.com/rajeshlande/fintrack](https://github.com/rajeshlande/fintrack)
 
 ---
 
@@ -163,8 +177,9 @@ All tables use **Row Level Security (RLS)** so users can only access their own d
 | `npm run build` | Create an optimized production build |
 | `npm run start` | Serve the production build |
 | `npm run lint` | Run ESLint across the project |
+| `npm run version:patch` | Bump patch version in `package.json` |
 
----
+**Current release:** [v1.0.8](CHANGELOG.md) — see [CHANGELOG.md](CHANGELOG.md) for release notes.
 
 ## Application Routes
 

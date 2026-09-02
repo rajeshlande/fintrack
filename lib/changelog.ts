@@ -12,6 +12,56 @@ export type ChangelogEntry = {
 /** Structured changelog — keep in sync with CHANGELOG.md */
 export const changelog: ChangelogEntry[] = [
   {
+    version: "1.0.8",
+    date: "2026-09-02",
+    sections: {
+      changed: [
+        "Master Data UI redesigned: transaction type cards, search/level filters, and collapsible accordion groups",
+        "Master Data category rows stack vertically on mobile with full-width Add, Edit, and Hide actions",
+        "Category edit modal portaled to document.body with mobile bottom-sheet layout and pinned header/footer",
+      ],
+      fixed: [
+        "Master Data edit modal blur/shadow artifact on mobile when tapping Edit",
+        "Master Data edit modal not adapting to mobile screen size (viewport sync, safe-area insets, scrollable body, horizontal overflow)",
+      ],
+    },
+  },
+  {
+    version: "1.0.7",
+    date: "2026-09-02",
+    sections: {
+      added: [
+        "Complete Indian finance category seeds (~209 categories) with description, icon, color, and keywords in schema.sql",
+        "Master Data search across name, code, icon, and keywords; per-type category counts in Settings",
+        "Schema reference section on Master Data tab (fields, transaction types, re-seed instructions)",
+      ],
+      changed: [
+        "seed_finance_category extended with p_icon, p_color, p_keywords; named-parameter seed calls with upsert",
+        "Category list in Settings shows icon, sort order, and keyword chips from seeded master data",
+        "Master Data tab copy updated for all five transaction types",
+      ],
+      fixed: [
+        "seed_finance_category overload conflict and relation savings does not exist errors from unquoted descriptions",
+        "AUTO_DEBIT payment-method seed missing ON CONFLICT clause in schema.sql",
+      ],
+    },
+  },
+  {
+    version: "1.0.6",
+    date: "2026-09-02",
+    sections: {
+      added: [
+        "Settings Master Data tab with income/expense category editor (add, edit, deactivate)",
+        "saveCategoryAction and deleteCategoryAction for category maintenance",
+        "Transfer, Saving, and Investment transaction types plus transfer category seeds in schema.sql",
+      ],
+      changed: [
+        "Merged supabase/taxonomy.sql into supabase/schema.sql (single SQL file for schema + seeds)",
+        "seed_finance_category uses p_category_code with validation and upsert support",
+      ],
+    },
+  },
+  {
     version: "1.0.5",
     date: "2026-09-02",
     sections: {

@@ -7,6 +7,47 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.8] - 2026-09-02
+
+### Changed
+- Master Data UI redesigned: transaction type cards, search/level filters, and collapsible accordion groups
+- Master Data category rows stack vertically on mobile with full-width Add, Edit, and Hide actions
+- Category edit modal portaled to `document.body` with mobile bottom-sheet layout and pinned header/footer
+
+### Fixed
+- Master Data edit modal blur/shadow artifact on mobile when tapping Edit
+- Master Data edit modal not adapting to mobile screen size (viewport sync, safe-area insets, scrollable body, horizontal overflow)
+
+## [1.0.7] - 2026-09-02
+
+### Added
+- Complete Indian finance category seeds (~209 categories) with description, icon, color, and keywords in `schema.sql`
+- Master Data search across name, code, icon, and keywords; per-type category counts in Settings
+- Schema reference section on Master Data tab (fields, transaction types, re-seed instructions)
+
+### Changed
+- `seed_finance_category` extended with `p_icon`, `p_color`, `p_keywords`; named-parameter seed calls with upsert
+- Category list in Settings shows icon, sort order, and keyword chips from seeded master data
+- Master Data tab copy updated for all five transaction types (Income, Expense, Saving, Investment, Transfer)
+
+### Fixed
+- `seed_finance_category` overload conflict and `relation "savings" does not exist` errors from unquoted descriptions
+- AUTO_DEBIT payment-method seed missing `ON CONFLICT` clause in `schema.sql`
+
+## [1.0.6] - 2026-09-02
+
+### Added
+- Settings **Master Data** tab with income/expense category editor (add, edit, deactivate)
+- `saveCategoryAction` and `deleteCategoryAction` for category maintenance
+- Transfer, Saving, and Investment transaction types plus transfer category seeds in `schema.sql`
+
+### Changed
+- Merged `supabase/taxonomy.sql` into `supabase/schema.sql` (single SQL file for schema + seeds)
+- `seed_finance_category` uses `p_category_code` with validation and upsert support
+
+### Removed
+- `supabase/taxonomy.sql` (content now lives in `schema.sql`)
+
 ## [1.0.5] - 2026-09-02
 
 ### Added
@@ -102,7 +143,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Supabase auth integration
 - Basic dashboard mockup
 
-[Unreleased]: https://github.com/rajeshlande/fintrack/compare/v1.0.5...HEAD
+[Unreleased]: https://github.com/rajeshlande/fintrack/compare/v1.0.6...HEAD
+[1.0.6]: https://github.com/rajeshlande/fintrack/compare/v1.0.5...v1.0.6
 [1.0.5]: https://github.com/rajeshlande/fintrack/compare/v1.0.4...v1.0.5
 [1.0.4]: https://github.com/rajeshlande/fintrack/compare/v1.0.3...v1.0.4
 [1.0.3]: https://github.com/rajeshlande/fintrack/compare/v1.0.2...v1.0.3

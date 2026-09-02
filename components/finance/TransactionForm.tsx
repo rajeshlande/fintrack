@@ -382,7 +382,7 @@ function LegacyTransactionForm({
     <form action={action} className="space-y-3" suppressHydrationWarning>
       {isEdit && transaction && <input type="hidden" name="id" value={transaction.id} />}
       <p className="text-sm text-amber-700 bg-amber-50 border border-amber-200 rounded-xl px-3 py-2">
-        Run <code className="text-xs">supabase/taxonomy.sql</code> in Supabase to enable category and payment method masters.
+        Run <code className="text-xs">supabase/schema.sql</code> in Supabase to enable category and payment method masters.
       </p>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <input

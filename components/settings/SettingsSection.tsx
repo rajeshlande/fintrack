@@ -1,17 +1,19 @@
 type SettingsSectionProps = {
   title: string;
   description?: string;
+  className?: string;
   children: React.ReactNode;
 };
 
 export function SettingsSection({
   title,
   description,
+  className = "",
   children,
 }: SettingsSectionProps) {
   return (
-    <section className="glass-panel-strong p-5 md:p-6">
-      <div className="mb-5">
+    <section className={`glass-panel-strong p-4 sm:p-5 md:p-6 min-w-0 ${className}`}>
+      <div className="mb-4 sm:mb-5">
         <h2 className="text-base font-bold text-[#1a1d23]">{title}</h2>
         {description && (
           <p className="text-sm text-gray-500 mt-1">{description}</p>

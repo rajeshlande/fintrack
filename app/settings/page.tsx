@@ -1,12 +1,14 @@
 import Link from "next/link";
 import { PageLayout } from "@/components/layout/PageLayout";
+import { CategoryManager } from "@/components/settings/CategoryManager";
 import {
   ChangePasswordForm,
   ProfileForm,
   SignOutButton,
 } from "@/components/settings/ProfileForm";
 import { SettingsRow, SettingsSection } from "@/components/settings/SettingsSection";
-import { SettingsTabs } from "@/components/settings/SettingsTabs";
+import { SettingsTabs, type SettingsTabId } from "@/components/settings/SettingsTabs";
+import { getCategoriesForManagement } from "@/lib/finance/category-queries";
 import { createClient } from "@/lib/supabase/server";
 import { getLatestVersion } from "@/lib/changelog";
 import { APP_NAME, getVersionLabel } from "@/lib/version";
@@ -15,9 +17,15 @@ type SettingsPageProps = {
   searchParams: Promise<{ tab?: string }>;
 };
 
+function resolveTab(tab?: string): SettingsTabId {
+  if (tab === "app") return "app";
+  if (tab === "master") return "master";
+  return "account";
+}
+
 export default async function SettingsPage({ searchParams }: SettingsPageProps) {
   const { tab } = await searchParams;
-  const activeTab = tab === "app" ? "app" : "account";
+  const activeTab = resolveTab(tab);
 
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
@@ -25,6 +33,9 @@ export default async function SettingsPage({ searchParams }: SettingsPageProps) 
   const { data: profile } = user
     ? await supabase.from("profiles").select("full_name, phone, currency").eq("id", user.id).maybeSingle()
     : { data: null };
+
+  const categoryData =
+    activeTab === "master" ? await getCategoriesForManagement() : null;
 
   const fullName = profile?.full_name ?? (user?.user_metadata?.full_name as string | undefined) ?? "";
   const phoneRaw = profile?.phone?.replace(/^\+91/, "") ?? (user?.user_metadata?.phone as string | undefined)?.replace(/^\+91/, "") ?? "";
@@ -35,7 +46,7 @@ export default async function SettingsPage({ searchParams }: SettingsPageProps) 
     : "—";
 
   return (
-    <PageLayout activeNav="Settings" title="Settings" subtitle="Account and app preferences">
+    <PageLayout activeNav="Settings" title="Settings" subtitle="Account and app preferences" wide={activeTab === "master"}>
       <SettingsTabs active={activeTab} />
 
       {activeTab === "account" ? (
@@ -57,6 +68,22 @@ export default async function SettingsPage({ searchParams }: SettingsPageProps) 
           <SettingsSection title="Session">
             <p className="text-sm text-gray-500 mb-4">Sign out from FinTrack on this device.</p>
             <SignOutButton />
+          </SettingsSection>
+        </div>
+      ) : activeTab === "master" ? (
+        <div className="space-y-4 md:space-y-5">
+          <SettingsSection
+            title="Category master data"
+            description="Organize how transactions are classified — browse by type, search, then tap Edit to update"
+          >
+            {categoryData ? (
+              <CategoryManager
+                transactionTypes={categoryData.transactionTypes}
+                categories={categoryData.categories}
+              />
+            ) : (
+              <p className="text-sm text-gray-400">Unable to load categories.</p>
+            )}
           </SettingsSection>
         </div>
       ) : (
