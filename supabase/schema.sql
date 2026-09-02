@@ -65,6 +65,81 @@ create trigger profiles_set_updated_at
   for each row execute function public.set_updated_at();
 
 -- -----------------------------------------------------------------------------
+-- Taxonomy masters (category, payment method, accounts)
+-- -----------------------------------------------------------------------------
+create table if not exists public.transaction_types (
+  id uuid primary key default gen_random_uuid(),
+  code text unique not null,
+  name text not null,
+  description text,
+  sort_order integer not null default 0,
+  is_active boolean not null default true,
+  created_at timestamptz not null default now()
+);
+
+create table if not exists public.finance_categories (
+  id uuid primary key default gen_random_uuid(),
+  transaction_type_id uuid not null references public.transaction_types (id) on delete restrict,
+  parent_id uuid references public.finance_categories (id) on delete restrict,
+  code text not null,
+  name text not null,
+  level integer not null default 1 check (level between 1 and 3),
+  description text,
+  icon text,
+  color text,
+  keywords text[],
+  sort_order integer not null default 0,
+  is_active boolean not null default true,
+  is_system boolean not null default true,
+  created_at timestamptz not null default now(),
+  unique (transaction_type_id, code)
+);
+
+create index if not exists finance_categories_type_idx
+  on public.finance_categories (transaction_type_id);
+create index if not exists finance_categories_parent_idx
+  on public.finance_categories (parent_id);
+
+create table if not exists public.payment_methods (
+  id uuid primary key default gen_random_uuid(),
+  parent_id uuid references public.payment_methods (id) on delete restrict,
+  code text unique not null,
+  name text not null,
+  level integer not null default 1 check (level between 1 and 3),
+  description text,
+  icon text,
+  sort_order integer not null default 0,
+  is_active boolean not null default true,
+  created_at timestamptz not null default now()
+);
+
+create index if not exists payment_methods_parent_idx
+  on public.payment_methods (parent_id);
+
+create table if not exists public.financial_accounts (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references auth.users (id) on delete cascade,
+  name text not null,
+  account_type text not null check (
+    account_type in ('BANK', 'CASH', 'CREDIT_CARD', 'WALLET', 'BROKERAGE', 'FD', 'RD', 'PPF', 'NPS', 'OTHER')
+  ),
+  institution_name text,
+  currency text not null default 'INR',
+  opening_balance numeric(15, 2) not null default 0,
+  is_active boolean not null default true,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create index if not exists financial_accounts_user_idx
+  on public.financial_accounts (user_id);
+
+drop trigger if exists financial_accounts_set_updated_at on public.financial_accounts;
+create trigger financial_accounts_set_updated_at
+  before update on public.financial_accounts
+  for each row execute function public.set_updated_at();
+
+-- -----------------------------------------------------------------------------
 -- Transactions
 -- -----------------------------------------------------------------------------
 create table if not exists public.transactions (
@@ -76,12 +151,40 @@ create table if not exists public.transactions (
   category text,
   payment_method text not null default 'UPI',
   notes text,
+  merchant text,
   transaction_date timestamptz not null default now(),
   created_at timestamptz not null default now(),
-  updated_at timestamptz not null default now()
+  updated_at timestamptz not null default now(),
+  transaction_type_id uuid references public.transaction_types (id) on delete restrict,
+  category_id uuid references public.finance_categories (id) on delete restrict,
+  subcategory_id uuid references public.finance_categories (id) on delete restrict,
+  item_id uuid references public.finance_categories (id) on delete restrict,
+  payment_method_id uuid references public.payment_methods (id) on delete restrict,
+  account_id uuid references public.financial_accounts (id) on delete set null
 );
 
+-- Upgrade existing transactions tables (no-op when columns already exist)
+alter table public.transactions
+  add column if not exists notes text,
+  add column if not exists updated_at timestamptz not null default now(),
+  add column if not exists merchant text,
+  add column if not exists transaction_type_id uuid references public.transaction_types (id) on delete restrict,
+  add column if not exists category_id uuid references public.finance_categories (id) on delete restrict,
+  add column if not exists subcategory_id uuid references public.finance_categories (id) on delete restrict,
+  add column if not exists item_id uuid references public.finance_categories (id) on delete restrict,
+  add column if not exists payment_method_id uuid references public.payment_methods (id) on delete restrict,
+  add column if not exists account_id uuid references public.financial_accounts (id) on delete set null;
+
 comment on table public.transactions is 'Income and expense ledger entries per user';
+comment on column public.transactions.category is 'Denormalized category label for display and legacy budget matching';
+comment on column public.transactions.payment_method is 'Denormalized payment method label for display';
+comment on column public.transactions.merchant is 'Payee or merchant name (e.g. Swiggy, Amazon)';
+comment on column public.transactions.transaction_type_id is 'FK to transaction_types master (INCOME, EXPENSE, etc.)';
+comment on column public.transactions.category_id is 'Level-1 finance category';
+comment on column public.transactions.subcategory_id is 'Level-2 finance subcategory';
+comment on column public.transactions.item_id is 'Level-3 finance item';
+comment on column public.transactions.payment_method_id is 'FK to payment_methods master (UPI, Card, NEFT, etc.)';
+comment on column public.transactions.account_id is 'FK to user financial account (HDFC Bank, etc.)';
 
 create index if not exists transactions_user_date_idx
   on public.transactions (user_id, transaction_date desc);
@@ -92,6 +195,24 @@ create index if not exists transactions_user_type_date_idx
 create index if not exists transactions_user_category_idx
   on public.transactions (user_id, category)
   where category is not null;
+
+create index if not exists transactions_payment_method_idx
+  on public.transactions (payment_method_id);
+
+create index if not exists transactions_category_idx
+  on public.transactions (category_id);
+
+create index if not exists transactions_subcategory_idx
+  on public.transactions (subcategory_id);
+
+create index if not exists transactions_item_idx
+  on public.transactions (item_id);
+
+create index if not exists transactions_account_idx
+  on public.transactions (account_id);
+
+create index if not exists transactions_transaction_type_idx
+  on public.transactions (transaction_type_id);
 
 drop trigger if exists transactions_set_updated_at on public.transactions;
 create trigger transactions_set_updated_at
@@ -180,10 +301,6 @@ create trigger networth_items_set_updated_at
 -- -----------------------------------------------------------------------------
 alter table public.profiles
   add column if not exists timezone text not null default 'Asia/Kolkata';
-
-alter table public.transactions
-  add column if not exists notes text,
-  add column if not exists updated_at timestamptz not null default now();
 
 alter table public.credit_cards
   add column if not exists updated_at timestamptz not null default now();
@@ -431,6 +548,10 @@ comment on function public.get_networth_summary() is 'Net worth items with pre-c
 -- Row Level Security
 -- -----------------------------------------------------------------------------
 alter table public.profiles enable row level security;
+alter table public.transaction_types enable row level security;
+alter table public.finance_categories enable row level security;
+alter table public.payment_methods enable row level security;
+alter table public.financial_accounts enable row level security;
 alter table public.transactions enable row level security;
 alter table public.credit_cards enable row level security;
 alter table public.budgets enable row level security;
@@ -455,6 +576,43 @@ create policy "profiles_update_own" on public.profiles
   for update to authenticated
   using ((select auth.uid()) = id)
   with check ((select auth.uid()) = id);
+
+-- Taxonomy masters (read-only for authenticated; accounts per-user)
+drop policy if exists "transaction_types_read" on public.transaction_types;
+create policy "transaction_types_read" on public.transaction_types
+  for select to authenticated
+  using (is_active = true);
+
+drop policy if exists "finance_categories_read" on public.finance_categories;
+create policy "finance_categories_read" on public.finance_categories
+  for select to authenticated
+  using (is_active = true);
+
+drop policy if exists "payment_methods_read" on public.payment_methods;
+create policy "payment_methods_read" on public.payment_methods
+  for select to authenticated
+  using (is_active = true);
+
+drop policy if exists "financial_accounts_select_own" on public.financial_accounts;
+create policy "financial_accounts_select_own" on public.financial_accounts
+  for select to authenticated
+  using ((select auth.uid()) = user_id);
+
+drop policy if exists "financial_accounts_insert_own" on public.financial_accounts;
+create policy "financial_accounts_insert_own" on public.financial_accounts
+  for insert to authenticated
+  with check ((select auth.uid()) = user_id);
+
+drop policy if exists "financial_accounts_update_own" on public.financial_accounts;
+create policy "financial_accounts_update_own" on public.financial_accounts
+  for update to authenticated
+  using ((select auth.uid()) = user_id)
+  with check ((select auth.uid()) = user_id);
+
+drop policy if exists "financial_accounts_delete_own" on public.financial_accounts;
+create policy "financial_accounts_delete_own" on public.financial_accounts
+  for delete to authenticated
+  using ((select auth.uid()) = user_id);
 
 -- Transactions
 drop policy if exists "Users manage own transactions" on public.transactions;

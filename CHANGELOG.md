@@ -7,6 +7,34 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.5] - 2026-09-02
+
+### Added
+- Redesigned All Transactions list with mobile card layout and desktop table view
+- Edit transaction modal with pre-filled taxonomy fields and date picker
+- `updateTransactionAction` for saving transaction edits
+- Delete confirmation before removing a transaction
+
+### Changed
+- Transaction form supports add and edit modes; date field on new entries
+- Taxonomy master tables and transaction FK columns consolidated in `schema.sql`
+- `taxonomy.sql` is now seeds-only (run after `schema.sql`)
+
+### Fixed
+- `schema.sql` upgrade patch runs before column comments/indexes so existing databases add `merchant` and taxonomy FKs without errors
+
+## [1.0.4] - 2026-09-02
+
+### Added
+- India-focused finance taxonomy (`supabase/taxonomy.sql`): transaction types, hierarchical categories, payment methods, and financial accounts
+- Transaction form with cascading Category → Subcategory → Item and Payment method → Payment source selects
+- Dashboard floating action button to add a transaction (`/transactions?add=1`)
+- Taxonomy query layer (`lib/finance/taxonomy-queries.ts`, `taxonomy-types.ts`) with legacy form fallback when migration is not applied
+
+### Changed
+- Transactions page renamed add section to “Log Income / Expense”; auto-scrolls to form when opened from FAB
+- `addTransactionAction` saves taxonomy foreign keys plus denormalized category and payment labels
+
 ## [1.0.3] - 2026-09-02
 
 ### Added
@@ -74,7 +102,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Supabase auth integration
 - Basic dashboard mockup
 
-[Unreleased]: https://github.com/rajeshlande/fintrack/compare/v1.0.3...HEAD
+[Unreleased]: https://github.com/rajeshlande/fintrack/compare/v1.0.5...HEAD
+[1.0.5]: https://github.com/rajeshlande/fintrack/compare/v1.0.4...v1.0.5
+[1.0.4]: https://github.com/rajeshlande/fintrack/compare/v1.0.3...v1.0.4
 [1.0.3]: https://github.com/rajeshlande/fintrack/compare/v1.0.2...v1.0.3
 [1.0.2]: https://github.com/rajeshlande/fintrack/compare/v1.0.1...v1.0.2
 [1.0.1]: https://github.com/rajeshlande/fintrack/compare/v1.0.0...v1.0.1

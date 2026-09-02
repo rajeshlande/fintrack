@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { AddTransactionFab } from "@/components/finance/AddTransactionFab";
 import { PageLayout } from "@/components/layout/PageLayout";
 import { formatDate, formatINR } from "@/lib/format";
 import { getDashboardData } from "@/lib/finance/queries";
@@ -98,6 +99,7 @@ export default async function DashboardPage() {
           </div>
         </section>
       </div>
+      <AddTransactionFab />
     </PageLayout>
   );
 }

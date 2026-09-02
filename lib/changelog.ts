@@ -12,6 +12,42 @@ export type ChangelogEntry = {
 /** Structured changelog — keep in sync with CHANGELOG.md */
 export const changelog: ChangelogEntry[] = [
   {
+    version: "1.0.5",
+    date: "2026-09-02",
+    sections: {
+      added: [
+        "Redesigned All Transactions list with mobile card layout and desktop table view",
+        "Edit transaction modal with pre-filled taxonomy fields and date picker",
+        "updateTransactionAction for saving transaction edits",
+        "Delete confirmation before removing a transaction",
+      ],
+      changed: [
+        "Transaction form supports add and edit modes; date field on new entries",
+        "Taxonomy master tables and transaction FK columns consolidated in schema.sql",
+        "taxonomy.sql is now seeds-only (run after schema.sql)",
+      ],
+      fixed: [
+        "schema.sql upgrade patch runs before column comments/indexes so existing databases add merchant and taxonomy FKs without errors",
+      ],
+    },
+  },
+  {
+    version: "1.0.4",
+    date: "2026-09-02",
+    sections: {
+      added: [
+        "India-focused finance taxonomy (supabase/taxonomy.sql): transaction types, hierarchical categories, payment methods, and financial accounts",
+        "Transaction form with cascading Category → Subcategory → Item and Payment method → Payment source selects",
+        "Dashboard floating action button to add a transaction (/transactions?add=1)",
+        "Taxonomy query layer with legacy form fallback when migration is not applied",
+      ],
+      changed: [
+        "Transactions page add section renamed to Log Income / Expense; auto-scrolls to form when opened from FAB",
+        "addTransactionAction saves taxonomy foreign keys plus denormalized category and payment labels",
+      ],
+    },
+  },
+  {
     version: "1.0.3",
     date: "2026-09-02",
     sections: {

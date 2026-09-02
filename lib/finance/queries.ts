@@ -8,6 +8,13 @@ export type Transaction = {
   category: string | null;
   payment_method: string;
   transaction_date: string;
+  merchant?: string | null;
+  category_id?: string | null;
+  subcategory_id?: string | null;
+  item_id?: string | null;
+  payment_method_id?: string | null;
+  account_id?: string | null;
+  transaction_type_id?: string | null;
 };
 
 export type CreditCard = {
