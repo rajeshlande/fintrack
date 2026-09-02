@@ -43,13 +43,15 @@ export async function updateSession(request: NextRequest) {
   const isResetPassword = pathname.startsWith("/reset-password");
   const isAuthCallback = pathname.startsWith("/auth/callback");
   const isAuthSignout = pathname.startsWith("/auth/signout");
+  const isOfflinePage = pathname.startsWith("/~offline") || pathname === "/_offline";
 
   if (
     !user &&
     !isAuthRoute &&
     !isResetPassword &&
     !isAuthCallback &&
-    !isAuthSignout
+    !isAuthSignout &&
+    !isOfflinePage
   ) {
     const url = request.nextUrl.clone();
     url.pathname = "/login";

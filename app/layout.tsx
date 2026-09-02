@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Geist } from "next/font/google";
+import { OfflineBanner } from "@/components/pwa/OfflineBanner";
 import { APP_NAME, getVersionLabel } from "@/lib/version";
 import "./globals.css";
 
@@ -9,6 +10,7 @@ export const metadata: Metadata = {
   title: `${APP_NAME} | Indian Personal Finance`,
   description: "Track your income, UPI expenses, and budgets securely.",
   applicationName: APP_NAME,
+  manifest: "/manifest.webmanifest",
   icons: {
     icon: [
       { url: "/logo.png", type: "image/png" },
@@ -29,8 +31,7 @@ export const viewport: Viewport = {
   themeColor: "#eef1f6",
   width: "device-width",
   initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
+  viewportFit: "cover",
 };
 
 export default function RootLayout({
@@ -42,6 +43,10 @@ export default function RootLayout({
         className={`${geist.variable} ${geist.className} antialiased`}
         suppressHydrationWarning
       >
+        <a href="#main-content" className="skip-link">
+          Skip to main content
+        </a>
+        <OfflineBanner />
         {children}
       </body>
     </html>

@@ -7,6 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.3] - 2026-09-02
+
+### Added
+- Industry-standard Supabase schema with enums, indexes, views, and RPC functions
+- Single-call dashboard, budget, and networth queries via `get_dashboard_summary`, `get_budgets_with_spent`, `get_networth_summary`
+- Custom offline page (`/~offline`) and live offline status banner
+- Root loading skeleton and error boundary with retry
+
+### Changed
+- PWA manifest enhanced with scope, categories, and display overrides
+- Service worker configured with offline fallback and frontend nav caching
+- Responsive layout: 1440px max content width, safe-area insets, 44px touch targets
+- Accessibility: skip link, focus-visible styles, reduced-motion support, text zoom enabled
+
+### Fixed
+- Ambiguous column references in Supabase RPC functions (`get_dashboard_summary`, etc.)
+
 ## [1.0.2] - 2026-09-02
 
 ### Changed
@@ -57,7 +74,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Supabase auth integration
 - Basic dashboard mockup
 
-[Unreleased]: https://github.com/rajeshlande/fintrack/compare/v1.0.2...HEAD
+[Unreleased]: https://github.com/rajeshlande/fintrack/compare/v1.0.3...HEAD
+[1.0.3]: https://github.com/rajeshlande/fintrack/compare/v1.0.2...v1.0.3
 [1.0.2]: https://github.com/rajeshlande/fintrack/compare/v1.0.1...v1.0.2
 [1.0.1]: https://github.com/rajeshlande/fintrack/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/rajeshlande/fintrack/compare/v0.1.0...v1.0.0

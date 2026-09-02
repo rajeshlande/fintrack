@@ -19,8 +19,9 @@ export function PageLayout({
   return (
     <AppShell activeNav={activeNav}>
       <main
-        className={`px-4 sm:px-6 lg:px-8 pt-6 md:pt-8 mx-auto w-full ${
-          wide ? "max-w-6xl" : "max-w-2xl"
+        id="main-content"
+        className={`px-4 sm:px-6 lg:px-8 pt-6 md:pt-8 mx-auto w-full max-w-page ${
+          wide ? "max-w-[90rem]" : "max-w-3xl"
         }`}
       >
         <PageHeader title={title} subtitle={subtitle} />

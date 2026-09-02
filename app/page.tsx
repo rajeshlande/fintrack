@@ -37,7 +37,7 @@ export default async function DashboardPage() {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 gap-3 md:grid-cols-2 lg:grid-cols-4">
             <Link href="/transactions" className="glass-panel p-4 hover:bg-white/90 transition-all">
               <p className="text-xs text-gray-400">Transactions</p>
               <p className="font-bold text-lg text-[#1a1d23] mt-1">Track</p>

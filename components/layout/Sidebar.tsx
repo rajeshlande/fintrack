@@ -71,8 +71,8 @@ export function Sidebar({ active }: SidebarProps) {
                 key={label}
                 href={href}
                 title={collapsed ? label : undefined}
-                className={`flex items-center rounded-2xl transition-all duration-200 ${
-                  collapsed ? "w-11 h-11 justify-center" : "w-full gap-3 px-3 py-2.5"
+                className={`flex items-center rounded-2xl transition-colors duration-200 ${
+                  collapsed ? "w-11 h-11 justify-center min-w-[var(--touch-min)] min-h-[var(--touch-min)]" : "w-full gap-3 px-3 py-2.5 min-h-[var(--touch-min)]"
                 } ${
                   isActive
                     ? "bg-[#1a1d23] text-white shadow-md"

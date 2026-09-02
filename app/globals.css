@@ -13,6 +13,8 @@
   --accent-soft: rgba(26, 29, 35, 0.08);
   --positive: #059669;
   --negative: #dc2626;
+  --page-max-width: 1440px;
+  --touch-min: 44px;
 }
 
 @theme inline {
@@ -29,6 +31,75 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-geist-sans), system-ui, sans-serif;
+}
+
+/* PWA: safe areas (notch / home indicator) */
+.safe-area-padding {
+  padding-top: env(safe-area-inset-top);
+  padding-right: env(safe-area-inset-right);
+  padding-bottom: env(safe-area-inset-bottom);
+  padding-left: env(safe-area-inset-left);
+}
+
+/* PWA: constrained content width on large desktops */
+.max-w-page {
+  width: min(100% - 2rem, var(--page-max-width));
+  margin-inline: auto;
+}
+
+@media (min-width: 640px) {
+  .max-w-page {
+    width: min(100% - 3rem, var(--page-max-width));
+  }
+}
+
+/* PWA: responsive auto-fit grid */
+.grid-auto-fit {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+  gap: 1rem;
+}
+
+@media (min-width: 768px) {
+  .grid-auto-fit {
+    gap: 1.5rem;
+  }
+}
+
+/* Accessibility: skip link */
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 100;
+  padding: 0.75rem 1rem;
+  background: var(--accent);
+  color: #fff;
+  font-size: 0.875rem;
+  font-weight: 600;
+  border-radius: 0 0 0.5rem 0;
+  text-decoration: none;
+}
+
+.skip-link:focus {
+  left: 0;
+}
+
+/* Accessibility: visible focus for keyboard users */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
 /* Ambient app background */
@@ -105,7 +176,7 @@ body {
   align-items: center;
   justify-content: center;
   width: 100%;
-  min-height: 3rem;
+  min-height: var(--touch-min);
   padding: 0.75rem 1rem;
   background: var(--accent);
   color: #fff;
@@ -137,7 +208,7 @@ body {
   justify-content: center;
   gap: 0.75rem;
   width: 100%;
-  min-height: 3rem;
+  min-height: var(--touch-min);
   padding: 0.75rem 1rem;
   background: rgba(255, 255, 255, 0.75);
   border: 1px solid var(--border);

@@ -3,15 +3,12 @@ import { DeleteNetworthButton } from "@/components/finance/DeleteNetworthButton"
 import { NetworthForm } from "@/components/finance/NetworthForm";
 import { SettingsSection } from "@/components/settings/SettingsSection";
 import { formatINR } from "@/lib/format";
-import { getNetworthItems } from "@/lib/finance/queries";
+import { getNetworthSummary } from "@/lib/finance/queries";
 
 export default async function NetworthPage() {
-  const items = await getNetworthItems();
+  const { items, totalAssets, totalLiabilities, networth } = await getNetworthSummary();
   const assets = items.filter((i) => i.item_type === "asset");
   const liabilities = items.filter((i) => i.item_type === "liability");
-  const totalAssets = assets.reduce((s, i) => s + Number(i.value), 0);
-  const totalLiabilities = liabilities.reduce((s, i) => s + Number(i.value), 0);
-  const networth = totalAssets - totalLiabilities;
 
   return (
     <PageLayout

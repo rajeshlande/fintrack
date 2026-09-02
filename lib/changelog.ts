@@ -12,6 +12,27 @@ export type ChangelogEntry = {
 /** Structured changelog — keep in sync with CHANGELOG.md */
 export const changelog: ChangelogEntry[] = [
   {
+    version: "1.0.3",
+    date: "2026-09-02",
+    sections: {
+      added: [
+        "Industry-standard Supabase schema with enums, indexes, views, and RPC functions",
+        "Single-call dashboard, budget, and networth queries via RPC functions",
+        "Custom offline page and live offline status banner",
+        "Root loading skeleton and error boundary with retry",
+      ],
+      changed: [
+        "PWA manifest enhanced with scope, categories, and display overrides",
+        "Service worker configured with offline fallback and frontend nav caching",
+        "Responsive layout: 1440px max width, safe-area insets, 44px touch targets",
+        "Accessibility: skip link, focus-visible styles, reduced-motion, text zoom enabled",
+      ],
+      fixed: [
+        "Ambiguous column references in Supabase RPC functions",
+      ],
+    },
+  },
+  {
     version: "1.0.2",
     date: "2026-09-02",
     sections: {

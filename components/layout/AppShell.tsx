@@ -11,7 +11,7 @@ export function AppShell({ children, activeNav = "Home" }: AppShellProps) {
     <div className="app-bg relative min-h-dvh flex">
       <Sidebar active={activeNav} />
 
-      <div className="relative z-10 flex-1 flex flex-col min-w-0 pb-24 md:pb-8">
+      <div className="relative z-10 flex-1 flex flex-col min-w-0 pb-[calc(5.5rem+env(safe-area-inset-bottom))] md:pb-8">
         {children}
       </div>
 
