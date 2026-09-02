@@ -1,6 +1,6 @@
 {
   "name": "fintrack",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "private": true,
   "description": "Indian personal finance PWA — track income, expenses, credit cards, budgets, and net worth.",
   "scripts": {

@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.9] - 2026-09-02
+
+### Added
+- Permanent category delete from Master Data edit modal (trash icon in header)
+- `hideCategoryAction` for soft-deactivating categories (separate from permanent delete)
+
+### Changed
+- Master Data **Hide** uses soft delete (`is_active = false`); edit-modal trash icon permanently removes the row from the database
+- Transaction category FKs use `ON DELETE SET NULL` so linked transactions survive category deletion
+
+### Fixed
+- Delete icon not shown when editing built-in categories in Master Data
+
 ## [1.0.8] - 2026-09-02
 
 ### Changed

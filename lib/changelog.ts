@@ -12,6 +12,21 @@ export type ChangelogEntry = {
 /** Structured changelog — keep in sync with CHANGELOG.md */
 export const changelog: ChangelogEntry[] = [
   {
+    version: "1.0.9",
+    date: "2026-09-02",
+    sections: {
+      added: [
+        "Permanent category delete from Master Data edit modal (trash icon in header)",
+        "hideCategoryAction for soft-deactivating categories (separate from permanent delete)",
+      ],
+      changed: [
+        "Master Data Hide uses soft delete; edit-modal trash icon permanently removes the row from the database",
+        "Transaction category FKs use ON DELETE SET NULL so linked transactions survive category deletion",
+      ],
+      fixed: ["Delete icon not shown when editing built-in categories in Master Data"],
+    },
+  },
+  {
     version: "1.0.8",
     date: "2026-09-02",
     sections: {

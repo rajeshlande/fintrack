@@ -5,7 +5,7 @@
 <h1 align="center">FinTrack</h1>
 
 <p align="center">
-  <a href="CHANGELOG.md"><img src="https://img.shields.io/badge/version-1.0.8-1a1d23?style=flat-square" alt="Version 1.0.8" /></a>
+  <a href="CHANGELOG.md"><img src="https://img.shields.io/badge/version-1.0.9-1a1d23?style=flat-square" alt="Version 1.0.9" /></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-GPLv3-blue?style=flat-square" alt="License: GPL v3" /></a>
 </p>
 
@@ -179,7 +179,7 @@ All tables use **Row Level Security (RLS)** so users can only access their own d
 | `npm run lint` | Run ESLint across the project |
 | `npm run version:patch` | Bump patch version in `package.json` |
 
-**Current release:** [v1.0.8](CHANGELOG.md) — see [CHANGELOG.md](CHANGELOG.md) for release notes.
+**Current release:** [v1.0.9](CHANGELOG.md) — see [CHANGELOG.md](CHANGELOG.md) for release notes.
 
 ## Application Routes
 

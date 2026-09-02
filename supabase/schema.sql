@@ -163,9 +163,9 @@ create table if not exists public.transactions (
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
   transaction_type_id uuid references public.transaction_types (id) on delete restrict,
-  category_id uuid references public.finance_categories (id) on delete restrict,
-  subcategory_id uuid references public.finance_categories (id) on delete restrict,
-  item_id uuid references public.finance_categories (id) on delete restrict,
+  category_id uuid references public.finance_categories (id) on delete set null,
+  subcategory_id uuid references public.finance_categories (id) on delete set null,
+  item_id uuid references public.finance_categories (id) on delete set null,
   payment_method_id uuid references public.payment_methods (id) on delete restrict,
   account_id uuid references public.financial_accounts (id) on delete set null
 );
@@ -176,9 +176,9 @@ alter table public.transactions
   add column if not exists updated_at timestamptz not null default now(),
   add column if not exists merchant text,
   add column if not exists transaction_type_id uuid references public.transaction_types (id) on delete restrict,
-  add column if not exists category_id uuid references public.finance_categories (id) on delete restrict,
-  add column if not exists subcategory_id uuid references public.finance_categories (id) on delete restrict,
-  add column if not exists item_id uuid references public.finance_categories (id) on delete restrict,
+  add column if not exists category_id uuid references public.finance_categories (id) on delete set null,
+  add column if not exists subcategory_id uuid references public.finance_categories (id) on delete set null,
+  add column if not exists item_id uuid references public.finance_categories (id) on delete set null,
   add column if not exists payment_method_id uuid references public.payment_methods (id) on delete restrict,
   add column if not exists account_id uuid references public.financial_accounts (id) on delete set null;
 
@@ -220,6 +220,22 @@ create index if not exists transactions_account_idx
 
 create index if not exists transactions_transaction_type_idx
   on public.transactions (transaction_type_id);
+
+-- Allow category permanent delete: clear transaction FKs automatically
+alter table public.transactions drop constraint if exists transactions_category_id_fkey;
+alter table public.transactions
+  add constraint transactions_category_id_fkey
+  foreign key (category_id) references public.finance_categories (id) on delete set null;
+
+alter table public.transactions drop constraint if exists transactions_subcategory_id_fkey;
+alter table public.transactions
+  add constraint transactions_subcategory_id_fkey
+  foreign key (subcategory_id) references public.finance_categories (id) on delete set null;
+
+alter table public.transactions drop constraint if exists transactions_item_id_fkey;
+alter table public.transactions
+  add constraint transactions_item_id_fkey
+  foreign key (item_id) references public.finance_categories (id) on delete set null;
 
 drop trigger if exists transactions_set_updated_at on public.transactions;
 create trigger transactions_set_updated_at
@@ -605,6 +621,11 @@ create policy "finance_categories_update" on public.finance_categories
   for update to authenticated
   using (true)
   with check (true);
+
+drop policy if exists "finance_categories_delete" on public.finance_categories;
+create policy "finance_categories_delete" on public.finance_categories
+  for delete to authenticated
+  using (true);
 
 drop policy if exists "payment_methods_read" on public.payment_methods;
 create policy "payment_methods_read" on public.payment_methods

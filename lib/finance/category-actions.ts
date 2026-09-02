@@ -125,7 +125,7 @@ export async function saveCategoryAction(
   return { error: null, success: true };
 }
 
-export async function deleteCategoryAction(
+export async function hideCategoryAction(
   _prev: CategoryActionState,
   formData: FormData
 ): Promise<CategoryActionState> {
@@ -142,7 +142,7 @@ export async function deleteCategoryAction(
     .eq("is_active", true);
 
   if (childCount && childCount > 0) {
-    return { error: "Remove or deactivate subcategories first." };
+    return { error: "Hide or delete subcategories first." };
   }
 
   const { data: category } = await supabase
@@ -159,6 +159,47 @@ export async function deleteCategoryAction(
     .eq("id", id);
 
   if (error) return { error: error.message };
+
+  revalidatePath("/settings");
+  revalidatePath("/transactions");
+  return { error: null, success: true };
+}
+
+export async function deleteCategoryAction(
+  _prev: CategoryActionState,
+  formData: FormData
+): Promise<CategoryActionState> {
+  const { supabase, userId } = await getAuthedClient();
+  if (!userId) return { error: "Not authenticated." };
+
+  const id = formData.get("id") as string;
+  if (!id) return { error: "Category not found." };
+
+  const { data: category } = await supabase
+    .from("finance_categories")
+    .select("id")
+    .eq("id", id)
+    .maybeSingle();
+
+  if (!category) return { error: "Category not found." };
+
+  const { count: childCount } = await supabase
+    .from("finance_categories")
+    .select("id", { count: "exact", head: true })
+    .eq("parent_id", id);
+
+  if (childCount && childCount > 0) {
+    return { error: "Delete subcategories first." };
+  }
+
+  const { error } = await supabase.from("finance_categories").delete().eq("id", id);
+
+  if (error) {
+    if (error.code === "23503") {
+      return { error: "Cannot delete this category because it is still referenced. Try Hide instead." };
+    }
+    return { error: error.message };
+  }
 
   revalidatePath("/settings");
   revalidatePath("/transactions");

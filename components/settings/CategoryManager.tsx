@@ -4,6 +4,7 @@ import { useActionState, useEffect, useMemo, useState, type ReactNode } from "re
 import { createPortal } from "react-dom";
 import {
   deleteCategoryAction,
+  hideCategoryAction,
   saveCategoryAction,
   type CategoryActionState,
 } from "@/lib/finance/category-actions";
@@ -331,7 +332,7 @@ export function CategoryManager({ transactionTypes, categories }: CategoryManage
       </div>
 
       <p className="text-xs text-gray-400 text-center pt-1">
-        Tap a category to edit. &ldquo;Hide&rdquo; removes it from new transactions (not deleted from database).
+        Tap a category to edit. &ldquo;Hide&rdquo; deactivates it; use the trash icon in the edit header to permanently delete.
       </p>
 
       {editor && (
@@ -461,14 +462,11 @@ function CategoryRow({
   onEdit: () => void;
   onAddChild?: () => void;
 }) {
-  const [deleteState, deleteAction, deletePending] = useActionState(
-    deleteCategoryAction,
-    initial
-  );
+  const [hideState, hideAction, hidePending] = useActionState(hideCategoryAction, initial);
 
   useEffect(() => {
-    if (deleteState?.error) window.alert(deleteState.error);
-  }, [deleteState?.error]);
+    if (hideState?.error) window.alert(hideState.error);
+  }, [hideState?.error]);
 
   const accent = category.color ?? "#94a3b8";
   const pad = nested ? "py-3 px-3" : compact ? "py-3 px-3 sm:px-4" : "p-3.5";
@@ -546,7 +544,7 @@ function CategoryRow({
           Edit
         </button>
         <form
-          action={deleteAction}
+          action={hideAction}
           className="min-w-0"
           onSubmit={(e) => {
             if (!window.confirm(`Hide "${category.name}" from new transactions?`)) e.preventDefault();
@@ -555,10 +553,10 @@ function CategoryRow({
           <input type="hidden" name="id" value={category.id} />
           <button
             type="submit"
-            disabled={deletePending}
+            disabled={hidePending}
             className="w-full min-h-[var(--touch-min)] rounded-xl text-xs font-semibold text-red-600 bg-red-50 hover:bg-red-100 disabled:opacity-50"
           >
-            {deletePending ? "…" : "Hide"}
+            {hidePending ? "…" : "Hide"}
           </button>
         </form>
       </div>
@@ -586,6 +584,54 @@ function FormSection({
   );
 }
 
+function DeleteIcon({ className = "w-5 h-5" }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+      <path strokeLinecap="round" strokeLinejoin="round" d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m1 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6h14ZM10 11v6M14 11v6" />
+    </svg>
+  );
+}
+
+function confirmPermanentDelete(category: FinanceCategory) {
+  const builtInNote = category.is_system
+    ? " This is a built-in category — you can re-add it by re-running schema seeds."
+    : "";
+  return window.confirm(
+    `Permanently delete "${category.name}"? This cannot be undone. Linked transactions will keep their amounts but lose this category reference.${builtInNote}`
+  );
+}
+
+function CategoryDeleteButton({
+  category,
+  action,
+  pending,
+  disabled,
+}: {
+  category: FinanceCategory;
+  action: (payload: FormData) => void;
+  pending: boolean;
+  disabled?: boolean;
+}) {
+  return (
+    <form
+      action={action}
+      onSubmit={(e) => {
+        if (!confirmPermanentDelete(category)) e.preventDefault();
+      }}
+    >
+      <input type="hidden" name="id" value={category.id} />
+      <button
+        type="submit"
+        disabled={pending || disabled}
+        className="flex items-center justify-center w-10 h-10 rounded-xl text-red-600 hover:bg-red-50 disabled:opacity-50"
+        aria-label={`Permanently delete ${category.name}`}
+      >
+        <DeleteIcon />
+      </button>
+    </form>
+  );
+}
+
 function CategoryEditorModal({
   editor,
   transactionTypes,
@@ -598,6 +644,7 @@ function CategoryEditorModal({
   onClose: () => void;
 }) {
   const [state, action, pending] = useActionState(saveCategoryAction, initial);
+  const [deleteState, deleteAction, deletePending] = useActionState(deleteCategoryAction, initial);
   const [level, setLevel] = useState<1 | 2 | 3>(editor.level);
   const [previewColor, setPreviewColor] = useState(editor.category?.color ?? "#6366f1");
   const [previewName, setPreviewName] = useState(editor.category?.name ?? "");
@@ -650,6 +697,10 @@ function CategoryEditorModal({
   }, [state?.success, onClose]);
 
   useEffect(() => {
+    if (deleteState?.success) onClose();
+  }, [deleteState?.success, onClose]);
+
+  useEffect(() => {
     const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     return () => {
@@ -698,14 +749,24 @@ function CategoryEditorModal({
                 </p>
               </div>
             </div>
-            <button
-              type="button"
-              onClick={onClose}
-              className="w-10 h-10 rounded-xl text-gray-500 hover:bg-black/5 shrink-0"
-              aria-label="Close"
-            >
-              ×
-            </button>
+            <div className="flex items-center gap-1 shrink-0">
+              {editor.mode === "edit" && editor.category && (
+                <CategoryDeleteButton
+                  category={editor.category}
+                  action={deleteAction}
+                  pending={deletePending}
+                  disabled={pending}
+                />
+              )}
+              <button
+                type="button"
+                onClick={onClose}
+                className="w-10 h-10 rounded-xl text-gray-500 hover:bg-black/5 shrink-0"
+                aria-label="Close"
+              >
+                ×
+              </button>
+            </div>
           </div>
         </div>
 
@@ -882,6 +943,7 @@ function CategoryEditorModal({
           </FormSection>
 
             {state?.error && <p className="alert-error text-sm">{state.error}</p>}
+            {deleteState?.error && <p className="alert-error text-sm">{deleteState.error}</p>}
           </div>
 
           <div className="shrink-0 border-t border-black/[0.04] bg-white px-4 sm:px-5 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
@@ -895,7 +957,7 @@ function CategoryEditorModal({
               </button>
               <button
                 type="submit"
-                disabled={pending}
+                disabled={pending || deletePending}
                 className="flex-1 min-h-[var(--touch-min)] btn-primary w-full sm:w-auto"
               >
                 {pending ? "Saving…" : editor.mode === "create" ? "Create category" : "Save changes"}
